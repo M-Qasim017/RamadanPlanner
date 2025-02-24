@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kids Ramadan Planner</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', cursive;
+        }
+
+        body {
+            background-color: #f0f8ff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Login Container */
+        .login-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Planner Container */
+        .planner-container {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            padding: 15px;
+        }
+
+        /* Responsive Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 120px repeat(30, minmax(35px, 1fr));
+            gap: 2px;
+            overflow: auto;
+            background: #e1f3e1;
+            padding: 10px;
+            border-radius: 10px;
+            touch-action: pan-x pan-y;
+        }
+
+        /* Date Cells */
+        .date-cell {
+            background: #2c5f2d;
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            min-width: 35px;
+        }
+
+        /* Task Cells */
+        .task-cell {
+            background: white;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+            min-width: 100px;
+        }
+
+        /* Checkboxes */
+        .checkbox {
+            min-width: 35px;
+            height: 35px;
+            border: 2px solid #2c5f2d;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            touch-action: manipulation;
+        }
+
+        .checkbox.checked {
+            background: #97d897;
+        }
+
+        .checkbox.checked::after {
+            content: "✓";
+            color: #2c5f2d;
+            font-size: 20px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 100px repeat(30, minmax(30px, 1fr));
+            }
+            .task-cell {
+                font-size: 13px;
+                min-width: 80px;
+            }
+            .checkbox {
+                min-width: 30px;
+                height: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: 80px repeat(30, minmax(25px, 1fr));
+            }
+            .task-cell {
+                font-size: 12px;
+                min-width: 70px;
+            }
+            .checkbox {
+                min-width: 25px;
+                height: 25px;
+            }
+        }
+
+        /* Common Elements */
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 3px solid #97d897;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .submit-btn {
+            background: #2c5f2d;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .user-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #e1f3e1;
+            border-radius: 10px;
+        }
+
+        .logout-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            background: #2c5f2d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginContainer">
+        <h1>🌙 Ramadan Planner 🌟</h1>
+        <input type="text" class="input-field" placeholder="Your Name" id="userName">
+        <input type="email" class="input-field" placeholder="Parent's Email" id="userEmail">
+        <button class="submit-btn" onclick="handleLogin()">Let's Start! 🚀</button>
+    </div>
+
+    <!-- Planner Screen -->
+    <div class="planner-container" id="plannerContainer">
+        <div class="user-header">
+            <h1>🌙 <span id="currentUserName"></span>'s Planner 🌟</h1>
+        </div>
+        <div class="grid" id="plannerGrid"></div>
+        <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+
+    <script>
+        let currentUser = null;
+        const tasks = [
+            '🕌 Fajr', '🕌 Dhuhr', '🕌 Asr',
+            '🕌 Maghrib', '🕌 Isha',
+            '📖 Quran', '🤲 Dhikr', '🌟 Help',
+            '😊 Kindness', '🕋 Dua', 'Taraweeh', 'Fasting', 'Helping'
+        ];
+
+        function handleLogin() {
+            const name = document.getElementById('userName').value.trim();
+            const email = document.getElementById('userEmail').value.trim().toLowerCase();
+            
+            if (!name || !email) {
+                alert('Please fill in both fields!');
+                return;
+            }
+
+            const accounts = JSON.parse(localStorage.getItem('ramadanAccounts')) || [];
+            currentUser = accounts.find(acc => acc.email === email) || {
+                name: name,
+                email: email,
+                progress: new Array(tasks.length * 30).fill(false)
+            };
+
+            showPlanner();
+            initializePlanner();
+        }
+
+        function showPlanner() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('plannerContainer').style.display = 'block';
+            document.getElementById('currentUserName').textContent = currentUser.name;
+        }
+
+        function initializePlanner() {
+            const grid = document.getElementById('plannerGrid');
+            grid.innerHTML = '';
+
+            // Create dates row
+            let html = '<div class="task-cell"></div>';
+            for(let day = 1; day <= 30; day++) {
+                html += `<div class="date-cell">${day}</div>`;
+            }
+
+            // Create tasks
+            tasks.forEach((task, index) => {
+                html += `<div class="task-cell">${task}</div>`;
+                for(let day = 0; day < 30; day++) {
+                    const progressIndex = index * 30 + day;
+                    const checked = currentUser.progress[progressIndex] ? 'checked' : '';
+                    html += `<div class="checkbox ${checked}" data-index="${progressIndex}"></div>`;
+                }
+            });
+
+            grid.innerHTML = html;
+
+            // Add checkbox handlers
+            document.querySelectorAll('.checkbox').forEach(checkbox => {
+                checkbox.addEventListener('click', function() {
+                    this.classList.toggle('checked');
+                    saveProgress();
+                });
+            });
+        }
+
+        function saveProgress() {
+            const checkboxes = document.querySelectorAll('.checkbox');
+            currentUser.progress = Array.from(checkboxes).map(cb => cb.classList.contains('checked'));
+            
+            const accounts = JSON.parse(localStorage.getItem('ramadanAccounts')) || [];
+            const existingIndex = accounts.findIndex(acc => acc.email === currentUser.email);
+            
+            if (existingIndex >= 0) {
+                accounts[existingIndex] = currentUser;
+            } else {
+                accounts.push(currentUser);
+            }
+            
+            localStorage.setItem('ramadanAccounts', JSON.stringify(accounts));
+        }
+
+        function logout() {
+            localStorage.setItem('ramadanAccounts', JSON.stringify(
+                JSON.parse(localStorage.getItem('ramadanAccounts')).filter(acc => acc.email !== currentUser.email)
+            ));
+            location.reload();
+        }
+
+        // Check for existing session
+        window.addEventListener('load', () => {
+            const accounts = JSON.parse(localStorage.getItem('ramadanAccounts')) || [];
+            if(accounts.length > 0) {
+                currentUser = accounts[0];
+                showPlanner();
+                initializePlanner();
+            }
+        });
+    </script>
+</body>
+</html>
