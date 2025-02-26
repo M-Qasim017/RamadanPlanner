@@ -1,298 +1,458 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kids Ramadan Planner</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Comic Sans MS', cursive;
-        }
-
-        body {
-            background-color: #f0f8ff;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Login Container */
-        .login-container {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        /* Planner Container */
-        .planner-container {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            padding: 15px;
-        }
-
-        /* Responsive Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: 120px repeat(30, minmax(35px, 1fr));
-            gap: 2px;
-            overflow: auto;
-            background: #e1f3e1;
-            padding: 10px;
-            border-radius: 10px;
-            touch-action: pan-x pan-y;
-        }
-
-        /* Date Cells */
-        .date-cell {
-            background: #2c5f2d;
-            color: white;
-            padding: 8px;
-            text-align: center;
-            font-size: 12px;
-            position: sticky;
-            top: 0;
-            z-index: 2;
-            min-width: 35px;
-        }
-
-        /* Task Cells */
-        .task-cell {
-            background: white;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-            position: sticky;
-            left: 0;
-            z-index: 1;
-            min-width: 100px;
-        }
-
-        /* Checkboxes */
-        .checkbox {
-            min-width: 35px;
-            height: 35px;
-            border: 2px solid #2c5f2d;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            touch-action: manipulation;
-        }
-
-        .checkbox.checked {
-            background: #97d897;
-        }
-
-        .checkbox.checked::after {
-            content: "✓";
-            color: #2c5f2d;
-            font-size: 20px;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 100px repeat(30, minmax(30px, 1fr));
-            }
-            .task-cell {
-                font-size: 13px;
-                min-width: 80px;
-            }
-            .checkbox {
-                min-width: 30px;
-                height: 30px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .grid {
-                grid-template-columns: 80px repeat(30, minmax(25px, 1fr));
-            }
-            .task-cell {
-                font-size: 12px;
-                min-width: 70px;
-            }
-            .checkbox {
-                min-width: 25px;
-                height: 25px;
-            }
-        }
-
-        /* Common Elements */
-        .input-field {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 3px solid #97d897;
-            border-radius: 8px;
-            font-size: 1rem;
-            text-align: center;
-        }
-
-        .submit-btn {
-            background: #2c5f2d;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        .user-header {
-            text-align: center;
-            margin-bottom: 15px;
-            padding: 15px;
-            background: #e1f3e1;
-            border-radius: 10px;
-        }
-
-        .logout-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 8px 16px;
-            background: #2c5f2d;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 1000;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Kids Ramadan Planner</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Arial Rounded MT Bold", Arial, sans-serif;
+    }
+    body {
+      background-color: #f0f8ff;
+      width: 100%;
+      overflow-x: hidden; /* Prevent horizontal scroll */
+    }
+    /* Login Container */
+    .login-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .login-container h1 {
+      margin-bottom: 20px;
+      font-size: clamp(1.5rem, 5vw, 2rem);
+    }
+    .input-field {
+      width: 100%;
+      padding: 15px;
+      margin: 15px 0;
+      border: 3px solid #97d897;
+      border-radius: 10px;
+      font-size: 18px;
+      text-align: center;
+    }
+    .submit-btn {
+      background: #2c5f2d;
+      color: white;
+      padding: 15px 40px;
+      border: none;
+      border-radius: 30px;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: transform 0.2s;
+    }
+    .submit-btn:hover {
+      transform: scale(1.05);
+    }
+    /* Planner Container */
+    .planner-container {
+      display: none; /* hidden until login */
+      width: 100%;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* enough height to show everything */
+    }
+    /* Header Styles */
+    .user-header {
+      text-align: center;
+      margin-bottom: 10px;
+      padding: 10px;
+      background: #e1f3e1;
+      border-radius: 10px;
+    }
+    .user-header h1 {
+      margin: 0;
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+    }
+    /* Grid Container */
+    .grid-container {
+      flex: 1;
+      position: relative;
+      background: #e1f3e1;
+      border-radius: 10px;
+      padding: 8px;
+      width: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    /* Grid System */
+    .grid {
+      display: grid;
+      gap: 2px;
+      padding-bottom: 10px;
+      width: 100%; /* Ensure the grid fills the container */
+    }
+    .task-cell,
+    .date-cell,
+    .score-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      text-align: center;
+      height: 40px;
+      padding: 4px;
+    }
+    .task-cell {
+      background: white;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      font-weight: bold;
+      color: #333;
+    }
+    .date-cell {
+      background: #2c5f2d;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      font-weight: bold;
+    }
+    .score-cell {
+      background: #e1f3e1;
+      color: #1e3c1e;
+      font-weight: bold;
+      position: sticky;
+      top: 40px; /* Sticks below the date row */
+      z-index: 2;
+    }
+    /* Checkboxes */
+    .checkbox {
+      background: white;
+      border: 2px solid #2c5f2d;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .checkbox.checked {
+      background: #97d897;
+    }
+    .checkbox.checked::after {
+      content: "✓";
+      color: #2c5f2d;
+      font-size: 20px;
+    }
+    /* Pagination + Visible Days label */
+    .pagination-controls {
+      display: none;
+      margin-top: 10px;
+      margin-bottom: 5px;
+      text-align: center;
+    }
+    .pagination-controls button {
+      padding: 8px 16px;
+      background: #2c5f2d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 0 5px;
+      font-size: 14px;
+    }
+    .page-indicator {
+      display: inline-block;
+      padding: 8px 16px;
+      font-weight: bold;
+    }
+    .visible-days {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      padding: 12px;
+      background: #2c5f2d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      z-index: 1000;
+      font-size: 14px;
+      display: none;
+    }
+    /* Footer */
+    footer {
+      position: fixed;
+      bottom: 10px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 14px;
+      color: #333;
+      z-index: 2000;
+    }
+    /* ========== MEDIA QUERIES (unified responsive grid) ========== */
+    /* (1) Phones <= 480px: Show 3 days/page */
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: minmax(80px, 1fr) repeat(3, minmax(45px, 1fr));
+      }
+      .pagination-controls,
+      .visible-days {
+        display: block;
+      }
+    }
+    /* (2) >480px up to 768px: Show 7 days/page */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .grid {
+        grid-template-columns: minmax(100px, 1fr) repeat(7, minmax(45px, 1fr));
+      }
+      .pagination-controls,
+      .visible-days {
+        display: block;
+      }
+    }
+    /* (3) >768px up to 1024px: Show 10 days/page */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .grid {
+        grid-template-columns: minmax(130px, 1fr) repeat(10, minmax(45px, 1fr));
+      }
+      .pagination-controls,
+      .visible-days {
+        display: block;
+      }
+    }
+    /* (4) >=1025px: Show all 30 days */
+    @media (min-width: 1025px) {
+      .grid {
+        grid-template-columns: minmax(160px, 1fr) repeat(30, minmax(40px, 1fr));
+      }
+      .pagination-controls,
+      .visible-days {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div class="login-container" id="loginContainer">
-        <h1>🌙 Ramadan Planner 🌟</h1>
-        <input type="text" class="input-field" placeholder="Your Name" id="userName">
-        <input type="email" class="input-field" placeholder="Parent's Email" id="userEmail">
-        <button class="submit-btn" onclick="handleLogin()">Let's Start! 🚀</button>
+  <!-- Login Screen -->
+  <div class="login-container" id="loginContainer">
+    <h1>🌙 Ramadan Planner 🌟</h1>
+    <input type="text" class="input-field" placeholder="Your Name" id="userName" />
+    <input type="email" class="input-field" placeholder="Parent's Email" id="userEmail" />
+    <button class="submit-btn" onclick="handleLogin()">Let's Start! 🚀</button>
+  </div>
+  <!-- Planner Screen -->
+  <div class="planner-container" id="plannerContainer">
+    <div class="user-header">
+      <h1>🌙 <span id="currentUserName"></span>'s Ramadan Planner 🌟</h1>
     </div>
-
-    <!-- Planner Screen -->
-    <div class="planner-container" id="plannerContainer">
-        <div class="user-header">
-            <h1>🌙 <span id="currentUserName"></span>'s Planner 🌟</h1>
-        </div>
-        <div class="grid" id="plannerGrid"></div>
-        <button class="logout-btn" onclick="logout()">Log Out</button>
+    <div class="pagination-controls">
+      <button id="prevBtn">◀ Previous</button>
+      <span class="page-indicator" id="pageIndicator">Days 1-7</span>
+      <button id="nextBtn">Next ▶</button>
     </div>
-
-    <script>
-        let currentUser = null;
-        const tasks = [
-            '🕌 Fajr', '🕌 Dhuhr', '🕌 Asr',
-            '🕌 Maghrib', '🕌 Isha',
-            '📖 Quran', '🤲 Dhikr', '🌟 Help',
-            '😊 Kindness', '🕋 Dua', 'Taraweeh', 'Fasting', 'Helping'
-        ];
-
-        function handleLogin() {
-            const name = document.getElementById('userName').value.trim();
-            const email = document.getElementById('userEmail').value.trim().toLowerCase();
-            
-            if (!name || !email) {
-                alert('Please fill in both fields!');
-                return;
-            }
-
-            const accounts = JSON.parse(localStorage.getItem('ramadanAccounts')) || [];
-            currentUser = accounts.find(acc => acc.email === email) || {
-                name: name,
-                email: email,
-                progress: new Array(tasks.length * 30).fill(false)
-            };
-
-            showPlanner();
-            initializePlanner();
+    <div class="grid-container">
+      <div class="grid" id="plannerGrid"></div>
+    </div>
+    <div class="visible-days" id="visibleDays">Days 1-7</div>
+  </div>
+  
+  <!-- Footer -->
+  <footer>made by Muhammad Bin Qasim</footer>
+  
+  <script>
+    const tasks = [
+      "🕌 Fajr",
+      "🕌 Dhuhr",
+      "🕌 Asr",
+      "🕌 Maghrib",
+      "🕌 Isha",
+      "📖 Quran",
+      "🤲 Dhikr",
+      "🌟 Help",
+      "😊 Kindness",
+      "🕋 Dua",
+      "Namaz",
+      "Taraweeh", 
+    ];
+    let currentUser = null;
+    let currentPage = 0;
+    let visibleDaysCount = 30; // default (desktop)
+    // Decide how many days to show based on width
+    function updateVisibleDays() {
+      const width = window.innerWidth;
+      if (width <= 480) {
+        visibleDaysCount = 3;
+      } else if (width <= 768) {
+        visibleDaysCount = 7;
+      } else if (width <= 1024) {
+        visibleDaysCount = 10;
+      } else {
+        visibleDaysCount = 30;
+      }
+      // Show/hide pagination
+      if (visibleDaysCount < 30) {
+        document.querySelector(".pagination-controls").style.display = "block";
+        document.getElementById("visibleDays").style.display = "block";
+      } else {
+        document.querySelector(".pagination-controls").style.display = "none";
+        document.getElementById("visibleDays").style.display = "none";
+      }
+      initializePlanner();
+    }
+    // Handle login
+    function handleLogin() {
+      const name = document.getElementById("userName").value.trim();
+      const email = document.getElementById("userEmail").value.trim().toLowerCase();
+      if (!name || !email) {
+        alert("Please fill in both fields!");
+        return;
+      }
+      const accounts = JSON.parse(localStorage.getItem("ramadanAccounts")) || [];
+      currentUser = accounts.find((acc) => acc.email === email) || {
+        id: Date.now(),
+        name,
+        email,
+        progress: new Array(tasks.length * 30).fill(false),
+      };
+      showPlanner();
+      updateVisibleDays();
+    }
+    // Show planner screen
+    function showPlanner() {
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("plannerContainer").style.display = "flex";
+      document.getElementById("currentUserName").textContent = currentUser.name;
+    }
+    // Build the planner grid
+    function initializePlanner() {
+      const grid = document.getElementById("plannerGrid");
+      grid.innerHTML = "";
+      const startDay = currentPage * visibleDaysCount;
+      const endDay = Math.min(startDay + visibleDaysCount, 30);
+      // Update page indicators
+      document.getElementById("pageIndicator").textContent = `Days ${startDay + 1}-${endDay}`;
+      document.getElementById("visibleDays").textContent = `Days ${startDay + 1}-${endDay}`;
+      // Header Row
+      let html = `<div class="task-cell">Days →</div>`;
+      for (let day = startDay + 1; day <= endDay; day++) {
+        html += `<div class="date-cell">${day}</div>`;
+      }
+      // Score Row
+      html += `<div class="task-cell score-cell">Score</div>`;
+      for (let day = startDay; day < endDay; day++) {
+        html += `<div class="score-cell" id="score-${day}">0%</div>`;
+      }
+      // Task Rows
+      tasks.forEach((task, taskIndex) => {
+        html += `<div class="task-cell">${task}</div>`;
+        for (let day = startDay; day < endDay; day++) {
+          const idx = taskIndex * 30 + day;
+          const checked = currentUser.progress[idx] ? "checked" : "";
+          html += `<div class="checkbox ${checked}" data-day="${day}" data-task="${taskIndex}"></div>`;
         }
-
-        function showPlanner() {
-            document.getElementById('loginContainer').style.display = 'none';
-            document.getElementById('plannerContainer').style.display = 'block';
-            document.getElementById('currentUserName').textContent = currentUser.name;
-        }
-
-        function initializePlanner() {
-            const grid = document.getElementById('plannerGrid');
-            grid.innerHTML = '';
-
-            // Create dates row
-            let html = '<div class="task-cell"></div>';
-            for(let day = 1; day <= 30; day++) {
-                html += `<div class="date-cell">${day}</div>`;
-            }
-
-            // Create tasks
-            tasks.forEach((task, index) => {
-                html += `<div class="task-cell">${task}</div>`;
-                for(let day = 0; day < 30; day++) {
-                    const progressIndex = index * 30 + day;
-                    const checked = currentUser.progress[progressIndex] ? 'checked' : '';
-                    html += `<div class="checkbox ${checked}" data-index="${progressIndex}"></div>`;
-                }
-            });
-
-            grid.innerHTML = html;
-
-            // Add checkbox handlers
-            document.querySelectorAll('.checkbox').forEach(checkbox => {
-                checkbox.addEventListener('click', function() {
-                    this.classList.toggle('checked');
-                    saveProgress();
-                });
-            });
-        }
-
-        function saveProgress() {
-            const checkboxes = document.querySelectorAll('.checkbox');
-            currentUser.progress = Array.from(checkboxes).map(cb => cb.classList.contains('checked'));
-            
-            const accounts = JSON.parse(localStorage.getItem('ramadanAccounts')) || [];
-            const existingIndex = accounts.findIndex(acc => acc.email === currentUser.email);
-            
-            if (existingIndex >= 0) {
-                accounts[existingIndex] = currentUser;
-            } else {
-                accounts.push(currentUser);
-            }
-            
-            localStorage.setItem('ramadanAccounts', JSON.stringify(accounts));
-        }
-
-        function logout() {
-            localStorage.setItem('ramadanAccounts', JSON.stringify(
-                JSON.parse(localStorage.getItem('ramadanAccounts')).filter(acc => acc.email !== currentUser.email)
-            ));
-            location.reload();
-        }
-
-        // Check for existing session
-        window.addEventListener('load', () => {
-            const accounts = JSON.parse(localStorage.getItem('ramadanAccounts')) || [];
-            if(accounts.length > 0) {
-                currentUser = accounts[0];
-                showPlanner();
-                initializePlanner();
-            }
+      });
+      grid.innerHTML = html;
+      // Attach event listeners
+      document.querySelectorAll(".checkbox").forEach((box) => {
+        box.addEventListener("click", function () {
+          this.classList.toggle("checked");
+          saveProgress();
+          updateScores();
         });
-    </script>
+      });
+      updateScores();
+    }
+    // Update daily scores
+    function updateScores() {
+      const totalTasks = tasks.length;
+      const startDay = currentPage * visibleDaysCount;
+      const endDay = Math.min(startDay + visibleDaysCount, 30);
+      for (let day = startDay; day < endDay; day++) {
+        let completed = 0;
+        document.querySelectorAll(`.checkbox[data-day="${day}"]`).forEach((cb) => {
+          if (cb.classList.contains("checked")) completed++;
+        });
+        const percentage = Math.round((completed / totalTasks) * 100);
+        const scoreEl = document.getElementById(`score-${day}`);
+        if (scoreEl) {
+          scoreEl.textContent = percentage + "%";
+          if (percentage === 100) {
+            scoreEl.style.background = "#2c5f2d";
+            scoreEl.style.color = "white";
+          } else if (percentage >= 75) {
+            scoreEl.style.background = "#7ac142";
+            scoreEl.style.color = "white";
+          } else if (percentage >= 50) {
+            scoreEl.style.background = "#ffd700";
+            scoreEl.style.color = "#333";
+          } else {
+            scoreEl.style.background = "#ff6961";
+            scoreEl.style.color = "white";
+          }
+        }
+      }
+    }
+    // Save progress
+    function saveProgress() {
+      document.querySelectorAll(".checkbox").forEach((cb) => {
+        const day = parseInt(cb.dataset.day);
+        const task = parseInt(cb.dataset.task);
+        const idx = task * 30 + day;
+        currentUser.progress[idx] = cb.classList.contains("checked");
+      });
+      const accounts = JSON.parse(localStorage.getItem("ramadanAccounts")) || [];
+      const i = accounts.findIndex((acc) => acc.email === currentUser.email);
+      if (i >= 0) accounts[i] = currentUser;
+      else accounts.push(currentUser);
+      localStorage.setItem("ramadanAccounts", JSON.stringify(accounts));
+    }
+    // Pagination
+    function handleNext() {
+      const maxPages = Math.ceil(30 / visibleDaysCount) - 1;
+      if (currentPage < maxPages) {
+        currentPage++;
+        initializePlanner();
+      }
+    }
+    function handlePrev() {
+      if (currentPage > 0) {
+        currentPage--;
+        initializePlanner();
+      }
+    }
+    // Resize Handler
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const oldCount = visibleDaysCount;
+        updateVisibleDays();
+        if (oldCount !== visibleDaysCount) {
+          currentPage = Math.floor((currentPage * oldCount) / visibleDaysCount);
+          initializePlanner();
+        }
+      }, 200);
+    });
+    // On Load
+    window.addEventListener("load", () => {
+      document.getElementById("nextBtn").addEventListener("click", handleNext);
+      document.getElementById("prevBtn").addEventListener("click", handlePrev);
+      const accounts = JSON.parse(localStorage.getItem("ramadanAccounts")) || [];
+      if (accounts.length > 0) {
+        currentUser = accounts[0];
+        showPlanner();
+        updateVisibleDays();
+      }
+    });
+  </script>
 </body>
 </html>
